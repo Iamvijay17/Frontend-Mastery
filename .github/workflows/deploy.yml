@@ -12,26 +12,36 @@ jobs:
     steps:
       - name: Record Start Time
         id: start
-        run: echo "time=$(date +%s)" >> "$GITHUB_OUTPUT"
+        run: echo "time=$(date '+%d %b %Y %I:%M %p')" >> "$GITHUB_OUTPUT"
+
+      - name: Get Raw Start Timestamp (for duration calculation)
+        id: raw_start
+        run: echo "timestamp=$(date +%s)" >> "$GITHUB_OUTPUT"
 
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 🛠️ Add your actual deployment/build steps here
+      # 🛠️ Add your actual build/deploy steps here
       # Example:
       # - name: Build App
       #   run: npm install && npm run build
+      # - name: Deploy to Server
+      #   run: ./deploy.sh
 
       - name: Record End Time
         id: end
-        run: echo "time=$(date +%s)" >> "$GITHUB_OUTPUT"
+        run: echo "time=$(date '+%d %b %Y %I:%M %p')" >> "$GITHUB_OUTPUT"
+
+      - name: Get Raw End Timestamp (for duration calculation)
+        id: raw_end
+        run: echo "timestamp=$(date +%s)" >> "$GITHUB_OUTPUT"
 
       - name: Calculate Duration
         id: duration
         run: |
-          start=${{ steps.start.outputs.time }}
-          end=${{ steps.end.outputs.time }}
-          duration=$((end - start))
+          start_ts=${{ steps.raw_start.outputs.timestamp }}
+          end_ts=${{ steps.raw_end.outputs.timestamp }}
+          duration=$((end_ts - start_ts))
           mins=$((duration / 60))
           secs=$((duration % 60))
           echo "duration=${mins}m ${secs}s" >> "$GITHUB_OUTPUT"
@@ -74,7 +84,7 @@ jobs:
                         <td style="padding:30px;">
                           <h2 style="color:#2ecc71; font-size:22px; margin-top:0;">🚀 Deployment Details</h2>
 
-                          <p><strong>📅 Time:</strong> ${{ github.event.head_commit.timestamp }}</p>
+                          <p><strong>📅 Time:</strong> ${{ steps.start.outputs.time }}</p>
                           <p><strong>⏱️ Duration:</strong> ${{ steps.duration.outputs.duration }}</p>
                           <p><strong>👤 Deployer:</strong> <a href="https://github.com/${{  github.actor }}" style="color:#0366d6; text-decoration:none;">${{ github.actor }}</a></p>
                           <p><strong>📁 Repository:</strong> <code style="background-color:#f0f0f0; padding:2px 6px; border-radius:4px;">${{ github.repository }}</code></p>
