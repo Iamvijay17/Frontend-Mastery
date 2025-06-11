@@ -17,8 +17,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # ✅ TODO: Add your actual build/deploy steps here
-      # Example (for HTML/JS projects):
+      # ✅ Add your build/deploy steps here
+      # Example:
       # - name: Deploy to GitHub Pages
       #   uses: peaceiris/actions-gh-pages@v3
       #   with:
@@ -52,44 +52,40 @@ jobs:
           content_type: text/html
           body: |
             <!DOCTYPE html>
-            <html lang="en">
+            <html>
             <head>
-              <meta charset="UTF-8">
-              <title>Deployment Email</title>
+              <meta charset="UTF-8" />
+              <title>Deployment Status</title>
             </head>
             <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
-              <div style="max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
-                
-                <div style="background-color: #24292e; padding: 10px 20px;">
-                  <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" width="32" height="32" style="vertical-align: middle;" />
-                  <span style="color: #ffffff; font-size: 20px; margin-left: 10px; vertical-align: middle;">GitHub Deploy Notification</span>
+              <div style="max-width: 600px; margin: auto; background-color: #fff; border: 1px solid #ccc; border-radius: 8px;">
+                <div style="background-color: #24292e; padding: 16px; color: white;">
+                  <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" width="30" style="vertical-align: middle;">
+                  <span style="font-size: 18px; margin-left: 10px;">GitHub Deployment Notification</span>
                 </div>
 
                 <div style="padding: 20px;">
-                  <h2 style="color: #4CAF50;">🚀 Deployment Details</h2>
+                  <h2 style="color: #2ecc71;">🚀 Deployment Details</h2>
 
-                  <p><strong>📅 Time:</strong> <script>document.write(new Date("${{ github.event.head_commit.timestamp }}").toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }))</script></p>
+                  <p><strong>📅 Time:</strong> ${{ github.event.head_commit.timestamp }}</p>
                   <p><strong>⏱️ Duration:</strong> ${{ steps.duration.outputs.duration }}</p>
                   <p><strong>👤 Deployer:</strong> <a href="https://github.com/${{ github.actor }}" style="color:#0366d6;">${{ github.actor }}</a></p>
                   <p><strong>📁 Repository:</strong> <code>${{ github.repository }}</code></p>
                   <p><strong>🌿 Branch:</strong> <code>${{ github.ref_name }}</code></p>
-                  <p><strong>🔢 Commit SHA:</strong> <code>${{ github.sha }}</code></p>
-                  <p><strong>🔗 Commit Link:</strong> <a href="https://github.com/${{ github.repository }}/commit/${{ github.sha }}" style="color:#0366d6;">View Commit</a></p>
-                  
+                  <p><strong>🔢 Commit SHA:</strong> <a href="https://github.com/${{ github.repository }}/commit/${{ github.sha }}" style="color:#0366d6;">${{ github.sha }}</a></p>
                   <p><strong>📝 Commit Message:</strong><br />
                     <em>${{ github.event.head_commit.message }}</em>
                   </p>
-
                   <p><strong>📊 Status:</strong> <strong style="color: ${{ job.status == 'success' && 'green' || 'red' }};">${{ job.status }}</strong></p>
-
-                  <p><strong>🌐 GitHub Pages:</strong> 
-                    <a href="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" style="color: #0366d6;">
-                      Visit Site
+                  <p><strong>🌐 GitHub Pages:</strong>
+                    <a href="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" style="color:#0366d6;">
+                      View Site
                     </a>
                   </p>
+                </div>
 
-                  <hr />
-                  <p style="font-size: 0.9em; color: #777;">💬 This is an automated email sent by GitHub Actions.</p>
+                <div style="background-color: #f0f0f0; padding: 10px; text-align: center; font-size: 12px; color: #777;">
+                  💬 This is an automated email sent by GitHub Actions.
                 </div>
               </div>
             </body>
