@@ -8,11 +8,36 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
+      - name: Record Start Time
+        id: start
+        run: echo "time=$(date +%s)" >> "$GITHUB_OUTPUT"
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Your deployment steps would go here (e.g., deploy to Pages, Netlify, etc.)
+      # ✅ TODO: Add your actual build/deploy steps here
+      # Example (for HTML/JS projects):
+      # - name: Deploy to GitHub Pages
+      #   uses: peaceiris/actions-gh-pages@v3
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./dist
+
+      - name: Record End Time
+        id: end
+        run: echo "time=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+      - name: Calculate Duration
+        id: duration
+        run: |
+          start=${{ steps.start.outputs.time }}
+          end=${{ steps.end.outputs.time }}
+          duration=$((end - start))
+          mins=$((duration / 60))
+          secs=$((duration % 60))
+          echo "duration=${mins}m ${secs}s" >> "$GITHUB_OUTPUT"
 
       - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3
@@ -21,12 +46,51 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "GitHub Deploy: ${{ job.status }}"
-          to: vijay9578979255@gmail.com
-          from: GitHub Actions vijay9578979255@gmail.com
+          subject: "🚀 GitHub Deploy: ${{ job.status }}"
+          to: your-email@example.com
+          from: GitHub Actions <your-email@example.com>
+          content_type: text/html
           body: |
-            ✅ **Deploy result:** ${{ job.status }}
-            📁 **Repository:** ${{ github.repository }}
-            🔢 **Commit SHA:** ${{ github.sha }}
-            🔗 **Commit Link:** https://github.com/${{ github.repository }}/commit/${{ github.sha }}
-            📅 **Date:** ${{ github.event.head_commit.timestamp }}
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <title>Deployment Email</title>
+            </head>
+            <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+              <div style="max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
+                
+                <div style="background-color: #24292e; padding: 10px 20px;">
+                  <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" width="32" height="32" style="vertical-align: middle;" />
+                  <span style="color: #ffffff; font-size: 20px; margin-left: 10px; vertical-align: middle;">GitHub Deploy Notification</span>
+                </div>
+
+                <div style="padding: 20px;">
+                  <h2 style="color: #4CAF50;">🚀 Deployment Details</h2>
+
+                  <p><strong>📅 Time:</strong> <script>document.write(new Date("${{ github.event.head_commit.timestamp }}").toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }))</script></p>
+                  <p><strong>⏱️ Duration:</strong> ${{ steps.duration.outputs.duration }}</p>
+                  <p><strong>👤 Deployer:</strong> <a href="https://github.com/${{ github.actor }}" style="color:#0366d6;">${{ github.actor }}</a></p>
+                  <p><strong>📁 Repository:</strong> <code>${{ github.repository }}</code></p>
+                  <p><strong>🌿 Branch:</strong> <code>${{ github.ref_name }}</code></p>
+                  <p><strong>🔢 Commit SHA:</strong> <code>${{ github.sha }}</code></p>
+                  <p><strong>🔗 Commit Link:</strong> <a href="https://github.com/${{ github.repository }}/commit/${{ github.sha }}" style="color:#0366d6;">View Commit</a></p>
+                  
+                  <p><strong>📝 Commit Message:</strong><br />
+                    <em>${{ github.event.head_commit.message }}</em>
+                  </p>
+
+                  <p><strong>📊 Status:</strong> <strong style="color: ${{ job.status == 'success' && 'green' || 'red' }};">${{ job.status }}</strong></p>
+
+                  <p><strong>🌐 GitHub Pages:</strong> 
+                    <a href="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" style="color: #0366d6;">
+                      Visit Site
+                    </a>
+                  </p>
+
+                  <hr />
+                  <p style="font-size: 0.9em; color: #777;">💬 This is an automated email sent by GitHub Actions.</p>
+                </div>
+              </div>
+            </body>
+            </html>
