@@ -17,13 +17,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # ✅ Add your build/deploy steps here
+      # 🛠️ Add your actual deployment/build steps here
       # Example:
-      # - name: Deploy to GitHub Pages
-      #   uses: peaceiris/actions-gh-pages@v3
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: ./dist
+      # - name: Build App
+      #   run: npm install && npm run build
 
       - name: Record End Time
         id: end
@@ -46,46 +43,66 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "🚀 GitHub Deploy: ${{ job.status }}"
+          subject: "🚀 GitHub Deployment Status: ${{ job.status }}"
           to: vijay9578979255@gmail.com
           from: GitHub Actions
           html_body: |
             <!DOCTYPE html>
             <html>
             <head>
-              <meta charset="UTF-8" />
-              <title>Deployment Status</title>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width">
+              <title>Deployment Notification</title>
             </head>
-            <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
-              <div style="max-width: 600px; margin: auto; background-color: #fff; border: 1px solid #ccc; border-radius: 8px;">
-                <div style="background-color: #24292e; padding: 16px; color: white;">
-                  <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" width="30" style="vertical-align: middle;">
-                  <span style="font-size: 18px; margin-left: 10px;">GitHub Deployment Notification</span>
-                </div>
+            <body style="margin:0; padding:0; background-color:#f4f4f4; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+              <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td style="padding: 20px 0;">
+                    <!-- Container -->
+                    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+                      
+                      <!-- Header -->
+                      <tr>
+                        <td style="background-color:#24292e; padding:20px 30px; color:white;">
+                          <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"  alt="GitHub Logo" width="32" style="vertical-align:middle;">
+                          <span style="font-size:20px; margin-left:10px; vertical-align:middle;">GitHub Deployment Notification</span>
+                        </td>
+                      </tr>
 
-                <div style="padding: 20px;">
-                  <h2 style="color: #2ecc71;">🚀 Deployment Details</h2>
+                      <!-- Body -->
+                      <tr>
+                        <td style="padding:30px;">
+                          <h2 style="color:#2ecc71; font-size:22px; margin-top:0;">🚀 Deployment Details</h2>
 
-                  <p><strong>📅 Time:</strong> ${{ github.event.head_commit.timestamp }}</p>
-                  <p><strong>⏱️ Duration:</strong> ${{ steps.duration.outputs.duration }}</p>
-                  <p><strong>👤 Deployer:</strong> <a href="https://github.com/${{ github.actor }}" style="color:#0366d6;">${{ github.actor }}</a></p>
-                  <p><strong>📁 Repository:</strong> <code>${{ github.repository }}</code></p>
-                  <p><strong>🌿 Branch:</strong> <code>${{ github.ref_name }}</code></p>
-                  <p><strong>🔢 Commit SHA:</strong> <a href="https://github.com/${{ github.repository }}/commit/${{ github.sha }}" style="color:#0366d6;">${{ github.sha }}</a></p>
-                  <p><strong>📝 Commit Message:</strong><br />
-                    <em>${{ github.event.head_commit.message }}</em>
-                  </p>
-                  <p><strong>📊 Status:</strong> <strong style="color: ${{ job.status == 'success' && 'green' || 'red' }};">${{ job.status }}</strong></p>
-                  <p><strong>🌐 GitHub Pages:</strong>
-                    <a href="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" style="color:#0366d6;">
-                      View Site
-                    </a>
-                  </p>
-                </div>
+                          <p><strong>📅 Time:</strong> ${{ github.event.head_commit.timestamp }}</p>
+                          <p><strong>⏱️ Duration:</strong> ${{ steps.duration.outputs.duration }}</p>
+                          <p><strong>👤 Deployer:</strong> <a href="https://github.com/${{  github.actor }}" style="color:#0366d6; text-decoration:none;">${{ github.actor }}</a></p>
+                          <p><strong>📁 Repository:</strong> <code style="background-color:#f0f0f0; padding:2px 6px; border-radius:4px;">${{ github.repository }}</code></p>
+                          <p><strong>🌿 Branch:</strong> <code style="background-color:#f0f0f0; padding:2px 6px; border-radius:4px;">${{ github.ref_name }}</code></p>
+                          <p><strong>🔢 Commit SHA:</strong> <a href="https://github.com/${{  github.repository }}/commit/${{ github.sha }}" style="color:#0366d6; text-decoration:none;">${{ github.sha }}</a></p>
+                          <p><strong>📝 Commit Message:</strong><br><em>${{ github.event.head_commit.message }}</em></p>
 
-                <div style="background-color: #f0f0f0; padding: 10px; text-align: center; font-size: 12px; color: #777;">
-                  💬 This is an automated email sent by GitHub Actions.
-                </div>
-              </div>
+                          <p><strong>📊 Status:</strong>
+                            <strong style="color:${{ job.status == 'success' && '#2ecc71' || '#e74c3c' }}; font-weight:bold;">${{ job.status }}</strong>
+                          </p>
+
+                          <p><strong>🌐 GitHub Pages:</strong>
+                            <a href="https://${{  github.repository_owner }}.github.io/${{ github.event.repository.name }}/" style="color:#0366d6; text-decoration:none;">View Site</a>
+                          </p>
+                        </td>
+                      </tr>
+
+                      <!-- Footer -->
+                      <tr>
+                        <td style="background-color:#f0f0f0; padding:15px 30px; text-align:center; font-size:12px; color:#777;">
+                          💬 This is an automated email sent by GitHub Actions.
+                        </td>
+                      </tr>
+
+                    </table>
+                    <!-- End Container -->
+                  </td>
+                </tr>
+              </table>
             </body>
             </html>
