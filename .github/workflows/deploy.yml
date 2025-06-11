@@ -22,8 +22,8 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "GitHub Deploy: ${{ job.status }}"
-          to: your-email@example.com
-          from: GitHub Actions <your-email@example.com>
+          to: vijay9578979255@gmail.com
+          from: GitHub Actions vijay9578979255@gmail.com
           body: |
             ✅ **Deploy result:** ${{ job.status }}
             📁 **Repository:** ${{ github.repository }}
